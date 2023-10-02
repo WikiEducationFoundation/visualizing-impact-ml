@@ -1,13 +1,16 @@
 import psycopg2
 import os
 
+accountfile = open('account.txt', 'r')
+account_info = accountfile.readlines(accountfile)
+
 def insert_into_database(article_title, article_content):
     try:
         connection = psycopg2.connect(
             host="localhost",
-            database="your_database_name",
-            user="your_username",
-            password="your_password"
+            database="wikivi",
+            user=account_info[0],
+            password=account_info[1]
         )
         cursor = connection.cursor()
 
