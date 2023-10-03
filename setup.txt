@@ -1,0 +1,26 @@
+su wikivi
+cd ~
+
+git clone https://github.com/WikiEducationFoundation/visualizing-impact-ml.git
+cd visualizing-impact-ml
+
+python3 -m venv wikivi_venv
+
+source wikivi_venv/bin/activate
+
+pip install utils mediawiki_dump psycopg2-binary
+
+exit
+sudo su postgres
+psql
+
+create user wikivi with password 'spindrift';
+create database wikivi;
+grant all privileges on database wikivi to wikivi;
+\c wikivi
+grant all on schema public to wikivi;
+exit
+sudo su wikivi
+cd impact-visualizer-ml
+psql -d wikivi -a -f github_files/firstcommand.sql
+
