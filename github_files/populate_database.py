@@ -1,5 +1,6 @@
 import psycopg2
 import os
+import json
 
 def insert_into_database(article_title, article_content):
     try:
@@ -25,10 +26,14 @@ def insert_into_database(article_title, article_content):
 
 def process_files(directory):
     for filename in os.listdir(directory):
-        with open(os.path.join(directory, filename), 'r') as file:
-            content = file.read()
-            # Split and process the content to extract article titles and their content
-            # Then call insert_into_database for each article
+        if filename.endswith('.json'):
+            with open(os.path.join(directory, filename), 'r') as file:
+                data = json.load(file)
+                for entry in data:
+                    title = entry.get('title')
+                    content = entry.get('text')
+                    # Call insert_into_database for each article
+                    insert_into_database(title, content)
 
 if __name__ == "__main__":
     process_files('output_directory')
