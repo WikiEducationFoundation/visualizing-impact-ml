@@ -2,19 +2,20 @@ import mwxml
 import argparse
 from populate_database import insert_into_database
 
+# Parser for manually entering a local XML article file
 parser = argparse.ArgumentParser(description='parse XML files with mwxml python package to format the XML data into python objects')
 parser.add_argument('-f', '--filenames', type=str, help='name of XML data file', nargs=1, required=True)
 args = parser.parse_args()
 
+# Process XML article into a mwxml iterator
 dump = mwxml.Dump.from_file(open(args.filenames[0]))
-#i = 0
+
+# Iterate through each article in the dump
 for page in dump.pages:
+    wikiid = page.id
     title = page.title
     revision_of_interest = next(page)
-    #title = revision_of_interest.title
     text = revision_of_interest.text
-    wikiid = page.id #revision_of_interest.id
-    #id = i
-    #i += 1
-    #print(id, title, text)
+    # Populate the database
     insert_into_database(wikiid, title, text)
+
