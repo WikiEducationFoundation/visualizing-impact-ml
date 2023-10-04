@@ -9,8 +9,9 @@ args = parser.parse_args()
 dump = mwxml.Dump.from_file(open(args.filenames[0]))
 i = 0
 for page in dump.pages:
+    title = page.title
     revision_of_interest = next(page)
-    title = revision_of_interest.title
+    #title = revision_of_interest.title
     text = revision_of_interest.text
     wikiid = revision_of_interest.id
     id = i
