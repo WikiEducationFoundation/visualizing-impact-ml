@@ -2,7 +2,7 @@ import psycopg2
 import os
 import json
 
-def insert_into_database(article_title, article_content):
+def insert_into_database(id, article_title, article_content):
     try:
         connection = psycopg2.connect(
             database="wikivi"
@@ -10,10 +10,10 @@ def insert_into_database(article_title, article_content):
         cursor = connection.cursor()
 
         insert_query = """
-        INSERT INTO wikipedia_articles (title, content)
+        INSERT INTO wikipedia_articles (id, title, content)
         VALUES (%s, %s);
         """
-        cursor.execute(insert_query, (article_title, article_content))
+        cursor.execute(insert_query, (id, article_title, article_content))
 
         connection.commit()
 
@@ -23,7 +23,7 @@ def insert_into_database(article_title, article_content):
         if connection:
             cursor.close()
             connection.close()
-
+'''
 def process_files(directory):
     for filename in os.listdir(directory):
         if filename.endswith('.json'):
@@ -33,7 +33,8 @@ def process_files(directory):
                     title = entry.get('title')
                     content = entry.get('text')
                     # Call insert_into_database for each article
-                    insert_into_database(title, content)
+                    insert_into_database(id, title, content)
+'''
 
 if __name__ == "__main__":
     process_files('output_directory')
