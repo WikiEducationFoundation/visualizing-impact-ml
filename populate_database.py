@@ -1,7 +1,7 @@
 import psycopg2
 import os
 
-def insert_into_database(id, article_title, article_content):
+def insert_into_database(wikiid, article_title, article_content):
     try:
         connection = psycopg2.connect(
             database="wikivi"
@@ -9,10 +9,10 @@ def insert_into_database(id, article_title, article_content):
         cursor = connection.cursor()
 
         insert_query = """
-        INSERT INTO wikipedia_articles (id, title, content)
-        VALUES (%s, %s);
+        INSERT INTO wikipedia_data (id, title, content)
+        VALUES (%s, %s, %s);
         """
-        cursor.execute(insert_query, (id, article_title, article_content))
+        cursor.execute(insert_query, (wikiid, article_title, article_content))
         
         connection.commit()
         

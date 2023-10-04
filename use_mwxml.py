@@ -7,13 +7,14 @@ parser.add_argument('-f', '--filenames', type=str, help='name of XML data file',
 args = parser.parse_args()
 
 dump = mwxml.Dump.from_file(open(args.filenames[0]))
-i = 0
+#i = 0
 for page in dump.pages:
     title = page.title
     revision_of_interest = next(page)
     #title = revision_of_interest.title
     text = revision_of_interest.text
-    wikiid = revision_of_interest.id
-    id = i
-    i += 1
-    insert_into_database(id, title, text)
+    wikiid = page.id #revision_of_interest.id
+    #id = i
+    #i += 1
+    #print(id, title, text)
+    insert_into_database(wikiid, title, text)
