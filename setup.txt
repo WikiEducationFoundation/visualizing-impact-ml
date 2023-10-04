@@ -1,15 +1,19 @@
+# Wikimedia Cloud server setup
+
+# User `wikivi` was set up via script during server launch.
+# Now let's get the project code and set up prereqs.
+
 su wikivi
 cd ~
-
 git clone https://github.com/WikiEducationFoundation/visualizing-impact-ml.git
 cd visualizing-impact-ml
 
+# Set up a python venv
 python3 -m venv wikivi_venv
-
 source wikivi_venv/bin/activate
-
 pip install utils mediawiki_dump psycopg2-binary
 
+# Set up postgres database and user
 exit
 sudo su postgres
 psql
@@ -20,6 +24,8 @@ grant all privileges on database wikivi to wikivi;
 \c wikivi
 grant all on schema public to wikivi;
 exit
+
+# Create the table
 sudo su wikivi
 cd impact-visualizer-ml
 psql -d wikivi -a -f github_files/firstcommand.sql
