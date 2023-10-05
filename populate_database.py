@@ -22,20 +22,3 @@ def insert_into_database(wikiid, article_title, article_content):
         if connection:
             cursor.close()
             connection.close()
-'''
-def process_files(directory):
-    for filename in os.listdir(directory):
-        if filename.endswith('.json'):
-            with open(os.path.join(directory, filename), 'r') as file:
-		data = json.load(file)
-		i = 0
-		for entry in data:
-		    title = entry.get('title')
-		    content = entry.get('text')
-		    id = i
-		    insert_into_database(id, title, content)
-		    i += 1
-
-if __name__ == "__main__":
-    process_files('output_directory')
-'''
