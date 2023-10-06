@@ -1,5 +1,8 @@
 import psycopg2
 import mwparserfromhell
+import datetime
+
+now = datetime.datetime.now()
 
 # Connect to the wikivi database
 conn = psycopg2.connect(
@@ -27,3 +30,7 @@ for row in rows:
 conn.commit()
 cursor.close()
 conn.close()
+
+now2 = datetime.datetime.now()
+elapsed = now2 - now
+print(elapsed.total_seconds())
