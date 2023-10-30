@@ -6,7 +6,7 @@ import subprocess
 DB_NAME = "wikivi"
 
 # Connect to the PostgreSQL database
-conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT)
+conn = psycopg2.connect(database=DB_NAME)
 cursor = conn.cursor()
 
 # Fetch articles from the wikipedia_data table
