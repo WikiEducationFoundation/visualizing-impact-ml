@@ -8,7 +8,7 @@ now = datetime.datetime.now()
 
 conn = psycopg2.connect(dbname="wikivi")
 cursor = conn.cursor()
-cursor.execute("SELECT id, parsed_content from wikipedia_data where parsed_content not like '%redirect%';")
+cursor.execute("SELECT id, parsed_content from wikipedia_data where parsed_content not like '%redirect%' limit 10000;")
 articles = cursor.fetchall()
 #cursor.execute("ALTER TABLE wikipedia_data ADD COLUMN embeddings TEXT;")
 
@@ -17,7 +17,7 @@ for article_id, content in articles:
     tokenized_content = " ".join(tokens)
     with open("temp.txt", "w") as f:
         f.write(tokenized_content)
-    subprocess.run(["/home/wikivi/visualizing-impact-ml/llama.cpp/embedding", "--log-disable", "-p", "temp.txt", "-m", "/home/wikivi/visualizing-impact-ml/llama.cpp/models/open_llama_3b_v2/ggml-model-f16.gguf"], stdout=open('output.vec', 'w'))
+    subprocess.run(["/extrastorage/visualizing-impact-ml/llama.cpp/embedding", "--log-disable", "-p", "temp.txt", "-m", "/extrastorage/visualizing-impact-ml/llama.cpp/models/open_llama_3b_v2/ggml-model-f16.gguf"], stdout=open('output.vec', 'w'))
     with open("output.vec", "r") as f:
         embedding = f.read()
     embedding_list = [float(value) for value in embedding.split()]
