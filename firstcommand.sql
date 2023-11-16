@@ -4,5 +4,6 @@ CREATE TABLE wikipedia_data (
     content TEXT,
     summary TEXT,
     sections TEXT,
-    links TEXT
+    links TEXT,
+    content TEXT
 );
