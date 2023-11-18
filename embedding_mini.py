@@ -8,13 +8,13 @@ import numpy as np
 now = datetime.datetime.now()
 
 parser = argparse.ArgumentParser(description="Process some integers.")
-parser.add_argument('-e', '--embedding_path', default="/home/wikivi/visualizing-impact-ml/llama.cpp/embedding", help="Path to the embeddings")
-parser.add_argument('-m', '--model_path', default="/home/wikivi/visualizing-impact-ml/llama.cpp/models/open_llama_3b_v2/ggml-model-f16.gguf", help="Path to the model file")
+parser.add_argument('-e', '--embedding_path', default="/extrastorage/visualizing-impact-ml/llama.cpp/embedding", help="Path to the embeddings")
+parser.add_argument('-m', '--model_path', default="/extrastorage/visualizing-impact-ml/llama.cpp/models/open_llama_3b_v2/ggml-model-f16.gguf", help="Path to the model file")
 args = parser.parse_args()
 
 conn = psycopg2.connect(dbname="wikivi")
 cursor = conn.cursor()
-cursor.execute("SELECT id, parsed_content from wikipedia_data where parsed_content not like '%redirect%';")
+cursor.execute("SELECT id, parsed_content from wikipedia_data where parsed_content not like '%redirect%' limit 10000;")
 articles = cursor.fetchall()
 
 for article_id, content in articles:
