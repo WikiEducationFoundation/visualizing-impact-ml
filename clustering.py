@@ -7,15 +7,23 @@ import pandas as pd
 
 conn = psycopg2.connect(dbname='wikivi')
 
-query = "SELECT embeddings from wikipedia_data"
+query = "SELECT embeddings from wikipedia_data where embeddings not like '%None%' "
 df = pd.read_sql_query(query, conn)
-embeddings = np.array(df['embeddings'].tolist()) # check if this works
+def parse_embedding(s):
+    s = s.strip('{}')
+    return np.array(s.split(','), dtype=float)
 
-k = 100
+embeddings = np.stack(df['embeddings'].apply(parse_embedding)) 
+
+k = 5
 kmeans = KMeans(n_clusters=k, random_state=0)
+clusters = kmeans.fit_predict(embeddings)
 
 reducer = umap.UMAP()
 embedding_2d = reducer.fit_transform(embeddings)
 
-#plt.figure()
-#fill in more later
+plt.figure()
+plt.scatter(embedding_2d[:, 0], embedding_2d[:, 1], c=clusters, cmap='Spectral', s=5)
+plt.colorbar()
+plt.savefig('firsttest_20clusters.png', dpi=300)
+plt.close()
