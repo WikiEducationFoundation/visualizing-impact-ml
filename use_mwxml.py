@@ -1,6 +1,9 @@
+import datetime
 import mwxml
 import argparse
 from populate_database import insert_into_database
+
+now = datetime.datetime.now()
 
 # Parser for manually entering a local XML article file
 parser = argparse.ArgumentParser(description='parse XML files with mwxml python package to format the XML data into python objects')
@@ -19,3 +22,6 @@ for page in dump.pages:
     # Populate the database
     insert_into_database(wikiid, title, text)
 
+now2 = datetime.datetime.now()
+elapsed = now2 - now
+print(elapsed.total_seconds())
