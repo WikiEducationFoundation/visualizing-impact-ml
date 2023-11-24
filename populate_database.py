@@ -5,7 +5,7 @@ import os
 def insert_into_bulk_database(cursor, data):
     try:
         insert_query = """
-        INSERT INTO wikipedia_data (id, title, content)
+        INSERT INTO wikipedia_data (id, title, content, parsed_content)
         VALUES %s;
         """
         psycopg2.extras.execute_values(
