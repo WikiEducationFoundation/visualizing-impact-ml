@@ -11,9 +11,6 @@ conn = psycopg2.connect(
 
 cursor = conn.cursor()
 
-# Add a new column for the parsed content
-cursor.execute("ALTER TABLE wikipedia_data ADD COLUMN parsed_content TEXT;")
-
 # Retrieve the content column
 cursor.execute("SELECT id, content FROM wikipedia_data;")
 rows = cursor.fetchall()
