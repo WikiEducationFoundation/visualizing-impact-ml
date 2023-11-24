@@ -1,9 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, DBSCAN
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
 import umap
 import psycopg2
 import pandas as pd
@@ -24,14 +23,15 @@ pca = PCA(n_components=1000)
 reduced_embeddings = pca.fit_transform(scaled_embeddings)
 
 k = 5
+dbscan = DBSCAN(eps=0.005, min_samples=10)
 kmeans = KMeans(n_clusters=k, init='k-means++', random_state=0, max_iter=500, n_init=10, tol=1e-4)
-clusters = kmeans.fit_predict(embeddings)
+clusters = dbscan.fit_predict(reduced_embeddings) #kmeans.fit_predict(embeddings)
 
 reducer = umap.UMAP()
-embedding_2d = reducer.fit_transform(embeddings)
+embedding_2d = reducer.fit_transform(reduced_embeddings)
 
 plt.figure()
 plt.scatter(embedding_2d[:, 0], embedding_2d[:, 1], c=clusters, cmap='Spectral', s=5)
 plt.colorbar()
-plt.savefig('firsttest_20clusters.png', dpi=300)
+plt.savefig('dbscan_min5.png', dpi=300)
 plt.close()
