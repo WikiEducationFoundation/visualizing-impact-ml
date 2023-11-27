@@ -14,10 +14,11 @@ args = parser.parse_args()
 
 conn = psycopg2.connect(dbname="wikivi")
 cursor = conn.cursor()
-cursor.execute("SELECT id, parsed_content from wikipedia_data where parsed_content not like '%redirect%' limit 10000;")
+cursor.execute("SELECT id, parsed_content from wikipedia_data where parsed_content not like '%redirect%' and embeddings is null limit 10000;")
 articles = cursor.fetchall()
 
 for article_id, content in articles:
+    print(article_id)
     tokens = content.split()[:512]
     tokenized_content = " ".join(tokens)
     with open("temp.txt", "w") as f:
@@ -31,8 +32,8 @@ for article_id, content in articles:
 
 cursor.close()
 conn.close()
-os.remove("temp.txt")
-os.remove("output.vec")
+#os.remove("temp.txt")
+#os.remove("output.vec")
 
 now2 = datetime.datetime.now()
 elapsed = now2 - now
