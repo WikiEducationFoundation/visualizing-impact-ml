@@ -1,5 +1,6 @@
 import datetime
 import mwxml
+import mwparserfromhell
 import argparse
 
 import psycopg2
@@ -27,9 +28,10 @@ for page in dump.pages:
     wikiid = page.id
     title = page.title
     revision_of_interest = next(page)
-    text = revision_of_interest.text
-    bulk_data.append((wikiid, title, text))
+    content = revision_of_interest.text
+    parsed_content = mwparserfromhell.parse(content).strip_code()
 
+    bulk_data.append((wikiid, title, content, parsed_content))
     if len(bulk_data) >= BULK_SIZE: 
         insert_into_bulk_database(cursor, bulk_data)
         bulk_data = []
