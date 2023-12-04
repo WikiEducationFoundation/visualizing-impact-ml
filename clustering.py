@@ -19,13 +19,13 @@ def parse_embedding(s):
 embeddings = np.stack(df['embeddings'].apply(parse_embedding))
 scaler = StandardScaler()
 scaled_embeddings = scaler.fit_transform(embeddings)
-pca = PCA(n_components=1000)
+pca = PCA(n_components=50)
 reduced_embeddings = pca.fit_transform(scaled_embeddings)
 
-k = 5
-dbscan = DBSCAN(eps=0.005, min_samples=10)
-kmeans = KMeans(n_clusters=k, init='k-means++', random_state=0, max_iter=500, n_init=10, tol=1e-4)
-clusters = dbscan.fit_predict(reduced_embeddings) #kmeans.fit_predict(embeddings)
+k = 10
+dbscan = DBSCAN(eps=0.05, min_samples=10)
+#kmeans = KMeans(n_clusters=k, init='k-means++', random_state=0, max_iter=500, n_init=10, tol=1e-4)
+clusters = dbscan.fit_predict(reduced_embeddings) #kmeans.fit_predict(reduced_embeddings)
 
 reducer = umap.UMAP()
 embedding_2d = reducer.fit_transform(reduced_embeddings)
@@ -33,5 +33,5 @@ embedding_2d = reducer.fit_transform(reduced_embeddings)
 plt.figure()
 plt.scatter(embedding_2d[:, 0], embedding_2d[:, 1], c=clusters, cmap='Spectral', s=5)
 plt.colorbar()
-plt.savefig('dbscan_min5.png', dpi=300)
+plt.savefig('dbscan_min10.png', dpi=300)
 plt.close()

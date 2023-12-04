@@ -22,5 +22,6 @@ embedding_2d = reducer.fit_transform(embeddings)
 
 fig = px.scatter(x=embedding_2d[:, 0], y=embedding_2d[:, 1], title="UMAP Visualization of Article Embeddings", labels={'x': 'UMAP Dimension 1', 'y': 'UMAP Dimension 2'})
 fig.update_traces(marker=dict(size=5))
+#fig.savefig('interactive.png')
 fig.show()
 
