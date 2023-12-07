@@ -32,9 +32,11 @@ def process_article(article_data, args):
 
 now = datetime.datetime.now()
 
-parser = argparse.ArgumentParser(description="Process some integers.")
+parser = argparse.ArgumentParser(description="Embedding params")
 parser.add_argument('-e', '--embedding_path', default="/extrastorage/visualizing-impact-ml/llama.cpp/embedding", help="Path to the embeddings")
 parser.add_argument('-m', '--model_path', default="/extrastorage/visualizing-impact-ml/llama.cpp/models/open_llama_3b_v2/ggml-model-f16.gguf", help="Path to the model file")
+parser.add_argument('-n', '--num_threads', type=int, default=3, help="Number of threads for parallel processing")
+
 args = parser.parse_args()
 
 conn = psycopg2.connect(dbname="wikivi")
@@ -44,6 +46,7 @@ articles = cursor.fetchall()
 cursor.close()
 conn.close()
 
+print(f"Running on {NUM_THREADS} threads")
 with concurrent.futures.ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
     executor.map(process_article, articles, [args]*len(articles))
 
