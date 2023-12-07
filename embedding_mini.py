@@ -8,8 +8,6 @@ import numpy as np
 import datetime
 import concurrent.futures
 
-NUM_THREADS = 2
-
 def process_article(article_data, args):
     article_id, content = article_data
     try:
@@ -46,8 +44,8 @@ articles = cursor.fetchall()
 cursor.close()
 conn.close()
 
-print(f"Running on {NUM_THREADS} threads")
-with concurrent.futures.ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
+print(f"Running on {args.num_threads} threads")
+with concurrent.futures.ThreadPoolExecutor(max_workers=args.num_threads) as executor:
     executor.map(process_article, articles, [args]*len(articles))
 
 now2 = datetime.datetime.now()
