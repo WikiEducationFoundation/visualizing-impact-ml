@@ -7,31 +7,11 @@ import numpy as np
 
 import datetime
 import concurrent.futures
-import logging
-from logging.handlers import RotatingFileHandler
 
-log_directory = 'logs'
-if not os.path.exists(log_directory):
-    os.makedirs(log_directory)
+import log_module
 
-max_log_size = 5 * 1024 * 1024  # 5 MB
-backup_count = 1  # Keep one backup file
-
-logging.basicConfig(level=logging.INFO)
-
-llama_logger = logging.getLogger('llama_output')
-llama_handler = RotatingFileHandler(os.path.join(log_directory, 'llama_output.log'), 
-                                    maxBytes=max_log_size, backupCount=backup_count)
-log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-llama_handler.setFormatter(log_formatter)
-llama_logger.addHandler(llama_handler)
-
-print_logger = logging.getLogger('print_output')
-print_handler = RotatingFileHandler(os.path.join(log_directory, 'print_output.log'), 
-                                    maxBytes=max_log_size, backupCount=backup_count)
-print_handler.setFormatter(log_formatter)
-print_logger.addHandler(print_handler)
-
+llama_logger = log_module.init_logger('llama_output', 'llama_output.log')
+print_logger = log_module.init_logger('print_output', 'print_output.log')
 
 def process_article(article_data, args):
     article_id, content = article_data
