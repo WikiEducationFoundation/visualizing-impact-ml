@@ -42,12 +42,15 @@ parser = argparse.ArgumentParser(description="Embedding params")
 parser.add_argument('-e', '--embedding_path', default="/extrastorage/visualizing-impact-ml/llama.cpp/embedding", help="Path to the embeddings")
 parser.add_argument('-m', '--model_path', default="/extrastorage/visualizing-impact-ml/llama.cpp/models/open_llama_3b_v2/ggml-model-f16.gguf", help="Path to the model file")
 parser.add_argument('-n', '--num_threads', type=int, default=3, help="Number of threads for parallel processing")
-
+parser.add_argument('-l', '--limit', type=int, default=10000, help="Limit the number of articles to process") 
 args = parser.parse_args()
+
+print_logger.info(f"Article limit set to: {args.limit} articles")
 
 conn = psycopg2.connect(dbname="wikivi")
 cursor = conn.cursor()
-cursor.execute("SELECT id, parsed_content from wikipedia_data where parsed_content not like '%redirect%' and embeddings is null limit 10000;")
+query = "SELECT id, parsed_content from wikipedia_data where parsed_content not like '%%redirect%%' and embeddings is null limit %s;"
+cursor.execute(query, (args.limit,))
 articles = cursor.fetchall()
 cursor.close()
 conn.close()
