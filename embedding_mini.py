@@ -1,15 +1,12 @@
 import argparse
-import os
 import psycopg2
 import subprocess
 import datetime
-import numpy as np
 
 import datetime
 import concurrent.futures
 
 import log_module
-from psycopg2 import pool
 
 now = datetime.datetime.now()
 
