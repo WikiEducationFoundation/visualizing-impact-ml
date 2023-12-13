@@ -9,9 +9,21 @@ import datetime
 import concurrent.futures
 
 import log_module
+from psycopg2 import pool
+
+now = datetime.datetime.now()
 
 llama_logger = log_module.init_logger('llama_output', 'llama_output.log')
 print_logger = log_module.init_logger('print_output', 'print_output.log')
+
+parser = argparse.ArgumentParser(description="Embedding params")
+parser.add_argument('-e', '--embedding_path', default="/extrastorage/visualizing-impact-ml/llama.cpp/embedding", help="Path to the embeddings")
+parser.add_argument('-m', '--model_path', default="/extrastorage/visualizing-impact-ml/llama.cpp/models/open_llama_3b_v2/ggml-model-f16.gguf", help="Path to the model file")
+parser.add_argument('-n', '--num_threads', type=int, default=3, help="Number of threads for parallel processing")
+parser.add_argument('-l', '--limit', type=int, default=10000, help="Limit the number of articles to process") 
+args = parser.parse_args()
+
+conn_pool = psycopg2.pool.SimpleConnectionPool(1, args.num_threads, dbname="wikivi")
 
 def process_article(article_data, args):
     article_id, content = article_data
@@ -27,23 +39,18 @@ def process_article(article_data, args):
             llama_logger.error(stderr)
 
         embedding_list = [float(value) for value in embedding.split()]
-        conn = psycopg2.connect(dbname="wikivi")
+        conn = conn_pool.getconn()
         cursor = conn.cursor()
         cursor.execute("UPDATE wikipedia_data SET embeddings = %s WHERE id = %s;", (embedding_list, article_id))
-        conn.commit()
         cursor.close()
-        conn.close()
+        conn.commit()
     except Exception as e:
         print_logger.error(f"Error processing article {article_id}: {e}")
-
-now = datetime.datetime.now()
-
-parser = argparse.ArgumentParser(description="Embedding params")
-parser.add_argument('-e', '--embedding_path', default="/extrastorage/visualizing-impact-ml/llama.cpp/embedding", help="Path to the embeddings")
-parser.add_argument('-m', '--model_path', default="/extrastorage/visualizing-impact-ml/llama.cpp/models/open_llama_3b_v2/ggml-model-f16.gguf", help="Path to the model file")
-parser.add_argument('-n', '--num_threads', type=int, default=3, help="Number of threads for parallel processing")
-parser.add_argument('-l', '--limit', type=int, default=10000, help="Limit the number of articles to process") 
-args = parser.parse_args()
+        if conn:
+            conn.rollback()
+    finally:
+        if conn:
+            conn_pool.putconn(conn)
 
 print_logger.info(f"Article limit set to: {args.limit} articles")
 
@@ -58,6 +65,8 @@ conn.close()
 print_logger.info(f"Running on {args.num_threads} threads")
 with concurrent.futures.ThreadPoolExecutor(max_workers=args.num_threads) as executor:
     executor.map(process_article, articles, [args]*len(articles))
+
+conn_pool.closeall()
 
 now2 = datetime.datetime.now()
 elapsed = now2 - now
