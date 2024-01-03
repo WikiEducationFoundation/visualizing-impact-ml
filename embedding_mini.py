@@ -32,9 +32,9 @@ def generate_embedding(article_data, args):
         tokens = content.split()[:512]
         tokenized_content = " ".join(tokens)
 
-        process = subprocess.Popen([args.embedding_path, "--log-disable", "-p", "-", "-m", args.model_path, "-t", args.thread_count], 
+        process = subprocess.Popen([args.embedding_path, "--log-disable", "-p", tokenized_content, "-m", args.model_path, "-t", args.thread_count], 
                                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
-        embedding, stderr = process.communicate(tokenized_content)
+        embedding, stderr = process.communicate()
 
         if stderr:
             llama_logger.error(stderr)
