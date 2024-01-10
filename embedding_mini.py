@@ -30,7 +30,7 @@ def generate_embedding(article_data, args):
     article_id, content = article_data
     try:
         tokens = content.split()[:512]
-        tokenized_content = " ".join(tokens)
+        tokenized_content = " ".join(tokens)[:512]
 
         process = subprocess.Popen([args.embedding_path, "--log-disable", "-p", tokenized_content, "-m", args.model_path, "-t", args.thread_count], 
                                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
